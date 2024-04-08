@@ -1,0 +1,44 @@
+.header {
+  background-color: #3457d5;
+  height: 60px;
+  padding: 5px 0;
+}
+
+.header form {
+  position: relative;
+
+  height: 100%;
+  width: 30%;
+
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+}
+
+.searchInput {
+  padding: 5px 50px;
+
+  width: 100%;
+  display: block;
+
+  border: none;
+  border-radius: 3px;
+}
+
+.buttonSearch {
+  padding: 0;
+
+  top: 50%;
+  left: 10px;
+
+  transform: translate(0, -50%);
+  position: absolute;
+
+  background-color: transparent;
+  border: none;
+}
+
+.searchIcon {
+  width: 23px;
+  height: 23px;
+}
