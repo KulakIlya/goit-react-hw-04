@@ -14,7 +14,7 @@ const toasterOptions = {
   },
 };
 
-const SearchBar = ({ handleSearchSubmit }) => {
+const SearchBar = ({ onSearch }) => {
   const handleFormSubmit = (e) => {
     e.preventDefault();
     const searchQuery = e.currentTarget.elements.search.value.trim();
@@ -24,7 +24,7 @@ const SearchBar = ({ handleSearchSubmit }) => {
       return;
     }
 
-    handleSearchSubmit(searchQuery);
+    onSearch(searchQuery);
   };
 
   return (
@@ -49,5 +49,5 @@ const SearchBar = ({ handleSearchSubmit }) => {
 export default SearchBar;
 
 SearchBar.propTypes = {
-  handleSearchSubmit: PropTypes.func,
+  onSearch: PropTypes.func,
 };

@@ -3,18 +3,18 @@ import ReactModal from 'react-modal';
 
 import styles from './ImageModal.module.css';
 
-const ImageModal = ({ isOpen, url, description }) => {
+const ImageModal = ({ isOpen, url, description, onClose }) => {
   return (
     <ReactModal
+      portalClassName={styles.modalPortal}
       className={styles.modal}
       overlayClassName={styles.overlay}
       isOpen={isOpen}
       ariaHideApp={false}
-      preventScroll={true}
+      shouldCloseOnEsc={true}
+      onRequestClose={onClose}
     >
-      <div>
-        <img src={url} alt={description} className={styles.modalImage} />
-      </div>
+      <img src={url} alt={description} className={styles.modalImage} />
     </ReactModal>
   );
 };
@@ -24,4 +24,5 @@ ImageModal.propTypes = {
   isOpen: PropTypes.bool,
   url: PropTypes.string,
   description: PropTypes.string,
+  onClose: PropTypes.func,
 };

@@ -1,13 +1,28 @@
+import PropTypes from 'prop-types';
+
 import ImageCard from './ImageCard';
 
-const ImageGallery = () => {
+import styles from './ImageGallery.module.css';
+
+const ImageGallery = ({ items, onImageClick }) => {
   return (
-    <ul>
+    <ul className={styles.gallery}>
       {/* Набір елементів списку із зображеннями */}
-      <li>
-        <ImageCard />
-      </li>
+      {items.map(({ id, urls: { small, regular }, description }) => (
+        <li
+          onClick={() => onImageClick({ url: regular, description })}
+          key={id}
+          className={styles.galleryItem}
+        >
+          <ImageCard url={small} description={description} />
+        </li>
+      ))}
     </ul>
   );
 };
 export default ImageGallery;
+
+ImageGallery.propTypes = {
+  items: PropTypes.array,
+  onImageClick: PropTypes.func,
+};

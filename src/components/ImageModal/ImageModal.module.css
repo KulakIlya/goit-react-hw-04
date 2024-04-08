@@ -1,5 +1,5 @@
-.modal {
-  width: 70vw;
+.modal:focus {
+  outline: none;
 }
 
 .overlay {
@@ -17,6 +17,5 @@
 }
 
 .modalImage {
-  width: 100%;
-  margin: 0 auto;
+  max-height: 90vh;
 }
