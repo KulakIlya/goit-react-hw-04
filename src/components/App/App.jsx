@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
+
+import ErrorMessage from '../ErrorMessage';
 import ImageGallery from '../ImageGallery';
 import ImageModal from '../ImageModal';
 import LoadMoreBtn from '../LoadMoreBtn';
@@ -17,6 +19,7 @@ function App() {
   const [searchQuery, setSearchQuery] = useState('');
   const [galleryImages, setGalleryImages] = useState([]);
   const [status, setStatus] = useState('idle');
+  const [error, serError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [modalInfo, setModalInfo] = useState(INITIAL_MODAL_INFO);
 
@@ -24,6 +27,7 @@ function App() {
 
   const handleSearch = (newQuery) => {
     if (newQuery === searchQuery) return;
+
     setCurrentPage(1);
     setSearchQuery(newQuery);
     setGalleryImages([]);
@@ -46,9 +50,15 @@ function App() {
       setStatus('loading');
       try {
         const data = await fetchImages(searchQuery, currentPage);
+
+        if (data.results.length === 0) throw new Error('No results found');
+
         setGalleryImages((prev) => [...prev, ...data.results]);
         setStatus('idle');
       } catch (error) {
+        setStatus('rejected');
+        serError(error);
+
         throw new Error(error.message);
       }
     }
@@ -57,19 +67,28 @@ function App() {
 
   useEffect(() => {
     if (currentPage === 1) return;
+
     appRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' });
   }, [galleryImages, currentPage]);
 
   return (
     <div ref={appRef}>
       <SearchBar onSearch={handleSearch} />
+
       {status === 'loading' && galleryImages.length === 0 && <Loader />}
+
       {galleryImages.length > 0 && (
         <>
           <ImageGallery items={galleryImages} onImageClick={handleImageClick} />
+
           {status === 'loading' && <Loader />}
-          <LoadMoreBtn onClick={handleLoadMore} />
+          {status === 'rejected' && <ErrorMessage message={error.message} />}
+          {status !== 'rejected' && <LoadMoreBtn onClick={handleLoadMore} />}
         </>
+      )}
+
+      {status === 'rejected' && galleryImages.length === 0 && (
+        <ErrorMessage message={error.message} />
       )}
 
       <ImageModal
