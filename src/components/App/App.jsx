@@ -18,8 +18,8 @@ const INITIAL_MODAL_INFO = {
 function App() {
   const [searchQuery, setSearchQuery] = useState('');
   const [galleryImages, setGalleryImages] = useState([]);
-  const [status, setStatus] = useState('idle');
-  const [error, serError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [modalInfo, setModalInfo] = useState(INITIAL_MODAL_INFO);
 
@@ -47,19 +47,18 @@ function App() {
     if (searchQuery === '') return;
 
     async function getImages() {
-      setStatus('loading');
+      setIsLoading(true);
       try {
         const data = await fetchImages(searchQuery, currentPage);
 
         if (data.results.length === 0) throw new Error('No results found');
 
         setGalleryImages((prev) => [...prev, ...data.results]);
-        setStatus('idle');
       } catch (error) {
-        setStatus('rejected');
-        serError(error);
-
+        setError(error);
         throw new Error(error.message);
+      } finally {
+        setIsLoading(false);
       }
     }
     getImages();
@@ -75,28 +74,30 @@ function App() {
     <div ref={appRef}>
       <SearchBar onSearch={handleSearch} />
 
-      {status === 'loading' && galleryImages.length === 0 && <Loader />}
+      {isLoading && galleryImages.length === 0 && <Loader />}
 
       {galleryImages.length > 0 && (
         <>
           <ImageGallery items={galleryImages} onImageClick={handleImageClick} />
 
-          {status === 'loading' && <Loader />}
-          {status === 'rejected' && <ErrorMessage message={error.message} />}
-          {status !== 'rejected' && <LoadMoreBtn onClick={handleLoadMore} />}
+          {isLoading && <Loader />}
+          {error && <ErrorMessage message={error.message} />}
+          {!error && <LoadMoreBtn onClick={handleLoadMore} />}
         </>
       )}
 
-      {status === 'rejected' && galleryImages.length === 0 && (
+      {error && galleryImages.length === 0 && (
         <ErrorMessage message={error.message} />
       )}
 
-      <ImageModal
-        isOpen={modalInfo.isOpen}
-        url={modalInfo.url}
-        description={modalInfo.description}
-        onClose={handleModalClose}
-      />
+      {modalInfo.isOpen && (
+        <ImageModal
+          isOpen={modalInfo.isOpen}
+          url={modalInfo.url}
+          description={modalInfo.description}
+          onClose={handleModalClose}
+        />
+      )}
     </div>
   );
 }
